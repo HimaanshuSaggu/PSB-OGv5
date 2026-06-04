@@ -1,40 +1,25 @@
 import { NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 
-// Friend's Debian/nginx server — public autoindex of capture images.
-const SOURCE = "http://hooloovoo.blue:18922/powersurge/images/";
-
-export const dynamic = "force-dynamic"; // never cache; always read live
+const SERVER = "http://hooloovoo.blue:18922/powersurge/images/";
 
 export async function GET() {
   try {
-    const res = await fetch(SOURCE, { cache: "no-store" });
-    if (!res.ok) {
-      return NextResponse.json({ ok: false, items: [], error: `status ${res.status}` });
-    }
+    const res = await fetch(SERVER, { next: { revalidate: 10 } });
     const html = await res.text();
-
-    // Parse any <a href="..."> that points at an image file (nginx autoindex).
-    const re = /href="([^"?#]+\.(?:jpe?g|png|webp|gif))"/gi;
-    const seen = new Set<string>();
-    const items: { url: string; name: string; ts: number | null }[] = [];
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(html))) {
-      let file = decodeURIComponent(m[1]);
-      if (file.includes("/")) file = file.split("/").pop() || file;
-      if (!file || seen.has(file)) continue;
-      seen.add(file);
-      // capture_1748147640.jpg  ->  epoch seconds
-      const t = file.match(/(\d{10})/);
-      const ts = t ? parseInt(t[1], 10) : null;
-      items.push({ url: SOURCE + file, name: file, ts });
-    }
-    items.sort((a, b) => (b.ts ?? 0) - (a.ts ?? 0));
-    return NextResponse.json({ ok: true, count: items.length, items });
+    const matches = [...html.matchAll(/href="([^"]+\.jpg)"/g)];
+    const files = matches.map(m => m[1]).reverse();
+    return NextResponse.json({ ok: true, files, base: SERVER });
   } catch (e) {
-    return NextResponse.json({
-      ok: false,
-      items: [],
-      error: e instanceof Error ? e.message : "fetch failed",
-    });
+    return NextResponse.json({ ok: false, files: [], base: SERVER });
   }
+}
+
+export async function GET_IMAGE(req: Request) {
+  const url = new URL(req.url);
+  const file = url.searchParams.get("file");
+  if (!file) return new Response("missing file", { status: 400 });
+  const res = await fetch(`${SERVER}${file}`);
+  const blob = await res.blob();
+  return new Response(blob, { headers: { "Content-Type": "image/jpeg", "Cache-Control": "public, max-age=3600" } });
 }

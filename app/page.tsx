@@ -562,7 +562,7 @@ export default function Page() {
                 </div>
                 <div className="last-detection">
                   <div className="last-img">
-                    {latest && <img src={latest.url} alt="Last detection capture" />}
+                    {latest && <img src={latest.url.startsWith("http") ? "/api/img?f=" + latest.url.split("/").pop() : latest.url} alt="Last detection capture" />}
                   </div>
                   <div className="gemini-block">
                     {latest && latest.verdict !== "capture" ? (
