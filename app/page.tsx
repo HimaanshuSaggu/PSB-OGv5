@@ -4,7 +4,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import CinematicHero from "./CinematicHero";
 import {
   RadialGauge,
@@ -77,39 +77,39 @@ function dailyCounts(caps: Cap[], days: number): number[] {
   return out;
 }
 
-const fadeUp = {
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
 };
-const heroStagger = {
+const heroStagger: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
 };
-const galleryStagger = {
+const galleryStagger: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.04, delayChildren: 0.05 } },
 };
-const cardScale = {
+const cardScale: Variants = {
   hidden: { opacity: 0, y: 20, scale: 0.96 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.45, ease: "easeOut" } },
 };
-const overlayBackdrop = {
+const overlayBackdrop: Variants = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { duration: 0.25 } },
-  exit: { opacity: 0, transition: { duration: 0.2, ease: [0.7, 0, 0.84, 0] } },
+  exit: { opacity: 0, transition: { duration: 0.2, ease: "easeInOut" } },
 };
-const overlayImage = {
+const overlayImage: Variants = {
   hidden: { opacity: 0, scale: 0.92 },
   show: { opacity: 1, scale: 1, transition: { type: "spring" as const, damping: 22, stiffness: 240 } },
-  exit: { opacity: 0, scale: 0.94, transition: { duration: 0.18, ease: [0.7, 0, 0.84, 0] } },
+  exit: { opacity: 0, scale: 0.94, transition: { duration: 0.18, ease: "easeInOut" } },
 };
-const subStage = {
+const subStage: Variants = {
   hidden: { opacity: 0, y: 10 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
   exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
 };
 
@@ -366,7 +366,7 @@ export default function Page() {
                 initial={{ opacity: 0, y: 24, scale: 0.96 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
               >
                 <span className="c3" />
                 <span className="c4" />
@@ -700,7 +700,7 @@ export default function Page() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
               >
                 <div className="section-eyebrow">Field Server · {live ? "Live Feed" : "Cached"}</div>
                 <h2 className="section-title">
@@ -714,7 +714,7 @@ export default function Page() {
                 initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
               >
                 <div className="live-indicator">
                   <span className="pulse" />
